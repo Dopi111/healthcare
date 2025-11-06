@@ -40,6 +40,7 @@ const Login_E = () => {
       const result = await login(formData.email, formData.password);
 
       if (result.success) {
+        // Navigate based on user role
         navigate('/Admin/Dashboard', { replace: true });
       } else {
         setError(result.message || 'Đăng nhập thất bại');
@@ -52,11 +53,11 @@ const Login_E = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-cyan-50 py-12 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-cyan-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full">
         {/* Logo & Title */}
         <div className="text-center mb-8">
-          <div className="inline-block bg-[#EDFFFA] text-[#FFC419] text-3xl font-bold px-6 py-3 rounded-lg mb-4 shadow-md">
+          <div className="inline-block bg-[#EDFFFA] text-[#FFC419] text-3xl font-bold px-6 py-3 rounded-lg mb-4">
             HealthCare
           </div>
           <h2 className="text-2xl font-bold text-gray-900">Đăng nhập hệ thống</h2>
@@ -109,7 +110,7 @@ const Login_E = () => {
                 </label>
               </div>
 
-              <a href="#" className="text-sm text-[#45C3D2] hover:text-[#3ab0c0] font-medium">
+              <a href="#" className="text-sm text-[#45C3D2] hover:text-[#3ab0c0]">
                 Quên mật khẩu?
               </a>
             </div>
@@ -126,11 +127,11 @@ const Login_E = () => {
           </form>
 
           {/* Demo Credentials */}
-          <div className="mt-6 p-4 bg-gradient-to-r from-gray-50 to-blue-50 rounded-lg border border-gray-200">
-            <p className="text-xs text-gray-700 font-semibold mb-2">💡 Tài khoản demo:</p>
+          <div className="mt-6 p-4 bg-gray-50 rounded-lg">
+            <p className="text-xs text-gray-600 font-semibold mb-2">Tài khoản demo:</p>
             <div className="text-xs space-y-1">
-              <p className="text-gray-600">📧 Email: <span className="font-mono">admin@healthcare.com</span></p>
-              <p className="text-gray-600">🔑 Mật khẩu: <span className="font-mono">admin123</span></p>
+              <p className="text-gray-500">Email: admin@healthcare.com</p>
+              <p className="text-gray-500">Mật khẩu: admin123</p>
             </div>
           </div>
         </div>
