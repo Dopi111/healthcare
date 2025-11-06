@@ -264,19 +264,26 @@ export const mockStaffAPI = {
   getAll: async (params = {}) => {
     await delay(600);
 
-    const { page = 1, limit = 10, search = '', staff_type = '' } = params;
+    const { page = 1, limit = 10, search = '', staff_type = '', role = '', sortBy = 'created_at', order = 'DESC' } = params;
 
     let filtered = staff;
 
+    // Filter by role or staff_type (support both)
+    const roleFilter = role || staff_type;
+    if (roleFilter) {
+      filtered = filtered.filter(s => s.role === roleFilter || s.staff_type === roleFilter);
+    }
+
+    // Search
     if (search) {
-      filtered = searchData(staff, search, ['full_name', 'phone', 'email']);
+      filtered = searchData(filtered, search, ['full_name', 'phone', 'email', 'staff_code', 'specialization']);
     }
 
-    if (staff_type) {
-      filtered = filtered.filter(s => s.staff_type === staff_type);
-    }
+    // Sort
+    const sorted = sortData(filtered, sortBy, order);
 
-    const result = paginate(filtered, page, limit);
+    // Paginate
+    const result = paginate(sorted, page, limit);
 
     return {
       success: true,
@@ -294,18 +301,106 @@ export const mockStaffAPI = {
     };
   },
 
+  getById: async (id) => {
+    await delay(400);
+
+    const staffMember = staff.find(s => s.id === parseInt(id));
+
+    if (!staffMember) {
+      throw new Error('Không tìm thấy nhân viên');
+    }
+
+    return {
+      success: true,
+      data: staffMember,
+    };
+  },
+
+  create: async (staffData) => {
+    await delay(800);
+
+    // Check duplicate email
+    const exists = staff.find(s => s.email === staffData.email);
+    if (exists) {
+      throw new Error('Email đã tồn tại');
+    }
+
+    const rolePrefix = staffData.role === 'doctor' ? 'BS' : staffData.role === 'nurse' ? 'YT' : 'KTV';
+    const staffCount = staff.filter(s => s.role === staffData.role).length + 1;
+
+    const newStaff = {
+      id: staff.length + 1,
+      staff_code: `${rolePrefix}${String(staffCount).padStart(3, '0')}`,
+      ...staffData,
+      created_at: new Date().toISOString(),
+    };
+
+    staff.push(newStaff);
+
+    return {
+      success: true,
+      message: 'Thêm nhân viên thành công',
+      data: newStaff,
+    };
+  },
+
+  update: async (id, staffData) => {
+    await delay(700);
+
+    const index = staff.findIndex(s => s.id === parseInt(id));
+
+    if (index === -1) {
+      throw new Error('Không tìm thấy nhân viên');
+    }
+
+    // Check duplicate email (excluding current staff)
+    const duplicate = staff.find(s => s.email === staffData.email && s.id !== parseInt(id));
+    if (duplicate) {
+      throw new Error('Email đã được sử dụng');
+    }
+
+    staff[index] = {
+      ...staff[index],
+      ...staffData,
+      updated_at: new Date().toISOString(),
+    };
+
+    return {
+      success: true,
+      message: 'Cập nhật thông tin nhân viên thành công',
+      data: staff[index],
+    };
+  },
+
+  delete: async (id) => {
+    await delay(500);
+
+    const index = staff.findIndex(s => s.id === parseInt(id));
+
+    if (index === -1) {
+      throw new Error('Không tìm thấy nhân viên');
+    }
+
+    staff.splice(index, 1);
+
+    return {
+      success: true,
+      message: 'Xóa nhân viên thành công',
+    };
+  },
+
   getDoctors: async (params = {}) => {
-    params.staff_type = 'doctor';
+    params.role = 'doctor';
     return mockStaffAPI.getAll(params);
   },
 
   getNurses: async (params = {}) => {
-    params.staff_type = 'nurse';
+    params.role = 'nurse';
     return mockStaffAPI.getAll(params);
   },
 
   getTechnicians: async (params = {}) => {
-    params.staff_type = 'technician';
+    params.role = 'technician';
     return mockStaffAPI.getAll(params);
   },
 };
@@ -315,15 +410,30 @@ export const mockAppointmentsAPI = {
   getAll: async (params = {}) => {
     await delay(600);
 
-    const { page = 1, limit = 10, status = '' } = params;
+    const { page = 1, limit = 10, status = '', date = '', doctor_id = '', sortBy = 'appointment_date', order = 'ASC' } = params;
 
     let filtered = appointments;
 
+    // Filter by status
     if (status) {
       filtered = filtered.filter(a => a.status === status);
     }
 
-    const result = paginate(filtered, page, limit);
+    // Filter by date
+    if (date) {
+      filtered = filtered.filter(a => a.appointment_date === date);
+    }
+
+    // Filter by doctor
+    if (doctor_id) {
+      filtered = filtered.filter(a => a.doctor_id === parseInt(doctor_id));
+    }
+
+    // Sort
+    const sorted = sortData(filtered, sortBy, order);
+
+    // Paginate
+    const result = paginate(sorted, page, limit);
 
     return {
       success: true,
@@ -336,6 +446,21 @@ export const mockAppointmentsAPI = {
           totalPages: result.totalPages,
         },
       },
+    };
+  },
+
+  getById: async (id) => {
+    await delay(400);
+
+    const appointment = appointments.find(a => a.id === parseInt(id));
+
+    if (!appointment) {
+      throw new Error('Không tìm thấy lịch hẹn');
+    }
+
+    return {
+      success: true,
+      data: appointment,
     };
   },
 
@@ -361,6 +486,45 @@ export const mockAppointmentsAPI = {
       success: true,
       message: 'Đăng ký lịch hẹn thành công',
       data: newAppointment,
+    };
+  },
+
+  update: async (id, appointmentData) => {
+    await delay(700);
+
+    const index = appointments.findIndex(a => a.id === parseInt(id));
+
+    if (index === -1) {
+      throw new Error('Không tìm thấy lịch hẹn');
+    }
+
+    appointments[index] = {
+      ...appointments[index],
+      ...appointmentData,
+      updated_at: new Date().toISOString(),
+    };
+
+    return {
+      success: true,
+      message: 'Cập nhật lịch hẹn thành công',
+      data: appointments[index],
+    };
+  },
+
+  delete: async (id) => {
+    await delay(500);
+
+    const index = appointments.findIndex(a => a.id === parseInt(id));
+
+    if (index === -1) {
+      throw new Error('Không tìm thấy lịch hẹn');
+    }
+
+    appointments.splice(index, 1);
+
+    return {
+      success: true,
+      message: 'Xóa lịch hẹn thành công',
     };
   },
 };
