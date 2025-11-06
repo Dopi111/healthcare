@@ -1,16 +1,27 @@
-// API Configuration
+// ============================================
+// API Service Layer
+// ============================================
+// Hỗ trợ cả Mock Data (development) và Real API (production)
+// Đổi USE_MOCK_DATA để switch giữa mock và real API
+
+import { mockAPI } from './mockApi';
+
+// ⚠️ QUAN TRỌNG: Đổi sang false khi đã setup backend
+const USE_MOCK_DATA = import.meta.env.VITE_USE_MOCK === 'true' || true;
+
+console.log('🔧 API Mode:', USE_MOCK_DATA ? 'MOCK DATA (No Backend)' : 'REAL API');
+
+// API Configuration (cho real API)
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/v1';
 
-// Get token from localStorage
+// Token management
 const getToken = () => localStorage.getItem('healthcare_token');
-
-// Set token to localStorage
 const setToken = (token) => localStorage.setItem('healthcare_token', token);
-
-// Remove token from localStorage
 const removeToken = () => localStorage.removeItem('healthcare_token');
 
-// API request helper
+// ============================================
+// Real API Request Helper
+// ============================================
 const apiRequest = async (endpoint, options = {}) => {
   const token = getToken();
 
@@ -38,8 +49,10 @@ const apiRequest = async (endpoint, options = {}) => {
   }
 };
 
+// ============================================
 // Authentication API
-export const authAPI = {
+// ============================================
+const realAuthAPI = {
   login: async (email, password) => {
     const data = await apiRequest('/auth/login', {
       method: 'POST',
@@ -83,8 +96,10 @@ export const authAPI = {
   },
 };
 
+// ============================================
 // Patients API
-export const patientsAPI = {
+// ============================================
+const realPatientsAPI = {
   getAll: async (params = {}) => {
     const queryString = new URLSearchParams(params).toString();
     return apiRequest(`/patients?${queryString}`);
@@ -119,8 +134,10 @@ export const patientsAPI = {
   },
 };
 
+// ============================================
 // Staff API
-export const staffAPI = {
+// ============================================
+const realStaffAPI = {
   getAll: async (params = {}) => {
     const queryString = new URLSearchParams(params).toString();
     return apiRequest(`/staff?${queryString}`);
@@ -175,8 +192,10 @@ export const staffAPI = {
   },
 };
 
+// ============================================
 // Appointments API
-export const appointmentsAPI = {
+// ============================================
+const realAppointmentsAPI = {
   getAll: async (params = {}) => {
     const queryString = new URLSearchParams(params).toString();
     return apiRequest(`/appointments?${queryString}`);
@@ -219,8 +238,10 @@ export const appointmentsAPI = {
   },
 };
 
+// ============================================
 // Clinics API
-export const clinicsAPI = {
+// ============================================
+const realClinicsAPI = {
   getAll: async (params = {}) => {
     const queryString = new URLSearchParams(params).toString();
     return apiRequest(`/clinics?${queryString}`);
@@ -256,8 +277,10 @@ export const clinicsAPI = {
   },
 };
 
+// ============================================
 // Revenue API
-export const revenueAPI = {
+// ============================================
+const realRevenueAPI = {
   getAllInvoices: async (params = {}) => {
     const queryString = new URLSearchParams(params).toString();
     return apiRequest(`/revenue/invoices?${queryString}`);
@@ -292,5 +315,15 @@ export const revenueAPI = {
   },
 };
 
-// Export getToken and removeToken for external use
+// ============================================
+// EXPORT - Auto switch giữa Mock và Real API
+// ============================================
+export const authAPI = USE_MOCK_DATA ? mockAPI.auth : realAuthAPI;
+export const patientsAPI = USE_MOCK_DATA ? mockAPI.patients : realPatientsAPI;
+export const staffAPI = USE_MOCK_DATA ? mockAPI.staff : realStaffAPI;
+export const appointmentsAPI = USE_MOCK_DATA ? mockAPI.appointments : realAppointmentsAPI;
+export const clinicsAPI = USE_MOCK_DATA ? mockAPI.clinics : realClinicsAPI;
+export const revenueAPI = USE_MOCK_DATA ? {} : realRevenueAPI; // Mock revenue chưa có
+
+// Token helpers
 export { getToken, setToken, removeToken };
