@@ -1,0 +1,146 @@
+@import "tailwindcss";
+
+/* ===== GLOBAL VARIABLES ===== */
+:root {
+  /* Colors - Brand */
+  --color-primary: #FFC419;
+  --color-primary-hover: #e6ae14;
+  --color-primary-light: #FFF3D1;
+  
+  /* Colors - Background */
+  --color-bg-light: #E3FFF8;
+  --color-bg-lighter: #EDFFFA;
+  --color-bg-gray: #F8F9FA;
+  --color-bg-footer: #eeeeee;
+  
+  /* Colors - Text */
+  --color-text-dark: #2c3e50;
+  --color-text-gray: #6b7280;
+  --color-text-light: #9ca3af;
+  --color-text-link: #1e90ff;
+  
+  /* Spacing */
+  --spacing-section: 2.5rem 5rem; /* py-10 px-20 */
+}
+
+/* ===== GLOBAL UTILITY CLASSES ===== */
+
+/* Primary Button - Dùng chung cho tất cả các nút chính */
+.btn-primary {
+  @apply bg-[#FFC419] hover:bg-[#e6ae14] text-white font-semibold px-6 py-2 rounded-xl shadow-md transition-colors;
+}
+
+/* Secondary Button - Dùng cho các nút phụ */
+.btn-secondary {
+  @apply bg-gray-100 hover:bg-gray-200 text-[#2c3e50] font-semibold px-6 py-3 rounded-lg transition-colors;
+}
+
+/* Card - Dùng chung cho tất cả các thẻ card */
+.card {
+  @apply bg-white shadow-md rounded-xl hover:shadow-lg transition-all;
+}
+
+.card-lg {
+  @apply bg-white shadow-lg rounded-2xl hover:shadow-xl transition-all;
+}
+
+/* Section - Dùng cho các section chính */
+.section {
+  @apply py-10 px-20;
+}
+
+.section-gray {
+  @apply py-10 px-20 bg-[#F8F9FA];
+}
+
+.section-light {
+  @apply py-10 px-20 bg-[#E3FFF8];
+}
+
+/* Headings - Tiêu đề chung */
+.heading-lg {
+  @apply text-[32px] font-bold text-[#2c3e50];
+}
+
+.heading-md {
+  @apply text-[28px] font-semibold text-[#2c3e50];
+}
+
+.heading-sm {
+  @apply text-[24px] font-semibold text-[#2c3e50];
+}
+
+.heading-xs {
+  @apply text-[20px] font-semibold text-[#2c3e50];
+}
+
+/* Text Utilities */
+.text-body {
+  @apply text-[16px] text-gray-600 leading-relaxed;
+}
+
+.text-small {
+  @apply text-[14px] text-gray-600;
+}
+
+.text-link {
+  @apply text-[#1e90ff] hover:underline cursor-pointer;
+}
+
+/* Grid Layouts - Dùng chung cho grid */
+.grid-2 {
+  @apply grid grid-cols-2 gap-6;
+}
+
+.grid-3 {
+  @apply grid grid-cols-3 gap-6;
+}
+
+.grid-4 {
+  @apply grid grid-cols-4 gap-6;
+}
+
+/* Banner Section - Dùng cho banner trang */
+.banner {
+  @apply h-[300px] bg-[#E3FFF8] flex flex-col justify-center items-center text-center;
+}
+
+.banner-lg {
+  @apply h-[400px] bg-[#E3FFF8] flex flex-col justify-center items-center text-center;
+}
+
+/* Icon Sizes */
+.icon-sm {
+  @apply text-[48px];
+}
+
+.icon-md {
+  @apply text-[56px];
+}
+
+.icon-lg {
+  @apply text-[72px];
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+@media (max-width: 768px) {
+  .section,
+  .section-gray,
+  .section-light {
+    @apply px-4 py-6;
+  }
+  
+  .grid-2,
+  .grid-3,
+  .grid-4 {
+    @apply grid-cols-1;
+  }
+  
+  .heading-lg {
+    @apply text-[24px];
+  }
+  
+  .heading-md {
+    @apply text-[20px];
+  }
+}
